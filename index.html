@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Missão Penosa — Simulador de Lançamento Espacial</title>
+    <meta
+      name="description"
+      content="Missão Penosa: simulador educativo de lançamento espacial com Cálculo Diferencial e uma missão lunar."
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="assets/characters/galinha-retrato-idle.png"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="pular" href="#principal">Pular para o conteúdo</a>
+
+    <!-- ======================================================= TELA INICIAL -->
+    <section
+      id="tela-inicio"
+      class="tela tela-inicio"
+      aria-label="Tela inicial"
+    >
+      <canvas
+        id="cenaInicio"
+        class="cena"
+        width="320"
+        height="180"
+        role="img"
+        aria-label="Plataforma de lançamento ao entardecer, com a galinha astronauta ao lado do foguete e a Lua no céu"
+      ></canvas>
+      <div class="inicio-conteudo">
+        <div class="inicio-topo">
+          <div class="placa-logo">
+            <h1 class="logo-texto">MISSÃO PENOSA</h1>
+            <p class="placa-sub">Simulador de Lançamento Espacial</p>
+          </div>
+          <p class="lema">
+            <img
+              class="px"
+              src="assets/icons/estrela.png"
+              alt=""
+              width="20"
+              height="20"
+            />
+            Grandes destinos começam com bons cálculos!
+            <img
+              class="px"
+              src="assets/icons/estrela.png"
+              alt=""
+              width="20"
+              height="20"
+            />
+          </p>
+        </div>
+        <div class="inicio-base">
+          <nav class="menu-inicio" aria-label="Menu principal">
+            <button
+              class="btn btn-verde btn-grande"
+              id="btnJogar"
+              type="button"
+            >
+              JOGAR
+            </button>
+            <button
+              class="btn btn-laranja btn-grande"
+              id="btnComoFunciona"
+              type="button"
+            >
+              COMO FUNCIONA?
+            </button>
+            <button
+              class="btn btn-creme btn-grande"
+              id="btnSobre"
+              type="button"
+            >
+              SOBRE O PROJETO
+            </button>
+          </nav>
+          <label class="check check-claro"
+            ><input type="checkbox" id="chkReduzirInicio" /> Reduzir
+            animações</label
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================= COMO FUNCIONA -->
+    <section
+      id="tela-como-funciona"
+      class="tela tela-texto"
+      hidden
+      aria-labelledby="tCom"
+    >
+      <div class="placa placa-larga">
+        <header class="placa-topo">
+          <h2 id="tCom">COMO FUNCIONA?</h2>
+          <button class="btn btn-creme btn-peq" type="button" data-ir="inicio">
+            ← Início
+          </button>
+        </header>
+        <div class="cols">
+          <article>
+            <h3>O jogo</h3>
+            <ol class="lista-passos">
+              <li>
+                <b>Escolha a missão</b>: de atravessar a troposfera até a
+                conquista especial da Lua.
+              </li>
+              <li>
+                <b>Monte o foguete</b>: massa, combustível, empuxo, consumo e
+                resistência do ar. Use os foguetes prontos como ponto de
+                partida.
+              </li>
+              <li>
+                <b>Lance e acompanhe</b>: a telemetria e os gráficos mostram os
+                números calculados em tempo real.
+              </li>
+              <li>
+                <b>Vitória ou derrota</b> dependem só do que o motor matemático
+                calculou — nunca da animação.
+              </li>
+            </ol>
+            <h3>A matemática</h3>
+            <pre class="formula">
+h(t) = posição (altitude)
+v(t) = h′(t) ≈ Δh / Δt       ← 1ª derivada
+a(t) = v′(t) ≈ Δv / Δt      ← 2ª derivada
+h(t) ≈ h(t₀) + h′(t₀)(t − t₀) ← reta tangente</pre
+            >
+            <h3>Modelo físico simplificado</h3>
+            <p>
+              Para destacar o Cálculo Diferencial, todas as missões usam os mesmos
+              valores de referência: g₀ = 9,80665 m/s², ρ₀ = 1,225 kg/m³, área = 1,2 m² e Cd = 0,5. A gravidade e a resistência do ar seguem o mesmo modelo em todas as missões. A massa do foguete diminui conforme o combustível é consumido. O motor calcula a aceleração e a simulação compara esse resultado com a segunda derivada obtida numericamente.
+            </p>
+            <p>
+              Os três gráficos mostram altitude, velocidade e aceleração ao longo
+              do tempo. Assim, é possível observar a posição e suas duas derivadas
+              durante o lançamento.
+            </p>
+          </article>
+          <aside class="aprenda">
+            <h3>APRENDA COM A GALINHA</h3>
+            <div class="aprenda-topo">
+              <canvas
+                id="retratoAprenda"
+                class="retrato"
+                width="20"
+                height="20"
+                aria-label="Galinha astronauta"
+              ></canvas>
+              <p id="falaAprenda" class="balao"></p>
+            </div>
+            <div id="aprendaLista" class="aprenda-lista"></div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================= SOBRE -->
+    <section
+      id="tela-sobre"
+      class="tela tela-texto"
+      hidden
+      aria-labelledby="tSobre"
+    >
+      <div class="placa">
+        <header class="placa-topo">
+          <h2 id="tSobre">SOBRE O PROJETO</h2>
+          <button class="btn btn-creme btn-peq" type="button" data-ir="inicio">
+            ← Início
+          </button>
+        </header>
+        <dl class="ficha" id="fichaProjeto"></dl>
+        <h3>Integrantes</h3>
+        <ul id="listaIntegrantes" class="integrantes"></ul>
+      </div>
+    </section>
+
+    <!-- ======================================================= SIMULADOR -->
+    <div id="tela-simulador" class="tela tela-sim" hidden>
+      <header class="topo">
+        <div class="topo-logo">
+          <img
+            class="px"
+            src="assets/icons/planeta.png"
+            alt=""
+            width="32"
+            height="32"
+          /><span class="logo-mini">MISSÃO PENOSA</span>
+        </div>
+        <div class="topo-acoes">
+          <span id="estado" class="selo" role="status" aria-live="polite"
+            >Pronta</span
+          >
+          <button
+            id="btnInicioTopo"
+            class="btn btn-creme btn-peq"
+            type="button"
+            data-ir="inicio"
+          >
+            Início
+          </button>
+          <button
+            id="btnAjuda"
+            class="btn btn-creme btn-peq"
+            type="button"
+            data-ir="como-funciona"
+          >
+            Como jogar
+          </button>
+          <label class="check check-claro"
+            ><input type="checkbox" id="chkReduzir" /> Reduzir animações</label
+          >
+        </div>
+      </header>
+
+      <main id="principal" class="grade">
+        <!-- coluna esquerda: missão + telemetria -->
+        <section class="coluna col-esq">
+          <div class="placa-azul" aria-labelledby="tMissao">
+            <h2 id="tMissao">ESCOLHA SUA MISSÃO</h2>
+            <ul
+              id="listaMissoes"
+              class="missoes"
+              role="radiogroup"
+              aria-label="Missões"
+            ></ul>
+            <p id="objetivoMissao" class="objetivo"></p>
+          </div>
+          <div class="placa-azul" aria-labelledby="tTele">
+            <h2 id="tTele">TELEMETRIA</h2>
+            <div class="instrumentos">
+              <div class="inst">
+                <img
+                  class="px"
+                  src="assets/icons/altitude.png"
+                  alt=""
+                  width="28"
+                  height="28"
+                /><span class="inst-r">ALTITUDE</span><b id="iAlt">—</b>
+              </div>
+              <div class="inst">
+                <img
+                  class="px"
+                  src="assets/icons/velocidade.png"
+                  alt=""
+                  width="28"
+                  height="28"
+                /><span class="inst-r">VELOCIDADE</span><b id="iVel">—</b>
+              </div>
+              <div class="inst">
+                <img
+                  class="px"
+                  src="assets/icons/aceleracao.png"
+                  alt=""
+                  width="28"
+                  height="28"
+                /><span class="inst-r">ACELERAÇÃO</span><b id="iAce">—</b>
+              </div>
+              <div class="inst">
+                <img
+                  class="px"
+                  src="assets/icons/combustivel.png"
+                  alt=""
+                  width="28"
+                  height="28"
+                /><span class="inst-r">COMBUSTÍVEL</span><b id="iCom">—</b>
+                <div
+                  class="barra"
+                  role="progressbar"
+                  aria-label="Combustível restante"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  aria-valuenow="0"
+                  id="barraComb"
+                >
+                  <i id="barraCombI"></i>
+                </div>
+              </div>
+            </div>
+            <details class="detalhes">
+              <summary>Telemetria completa</summary>
+              <dl id="telemetria"></dl>
+            </details>
+            <p id="dica" class="dica"></p>
+          </div>
+        </section>
+
+        <!-- centro: palco -->
+        <section class="coluna col-centro">
+          <div class="progresso-missao" aria-label="Progresso da missão">
+            <div class="progresso-rotulos">
+              <span id="etapaNome">Preparação</span><b id="progressoPct">0%</b>
+            </div>
+            <div
+              class="barra barra-grande"
+              role="progressbar"
+              id="barraMissao"
+              aria-label="Progresso da missão"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+            >
+              <i id="barraMissaoI"></i>
+            </div>
+            <p id="possibilidade" class="possibilidade" role="status"></p>
+          </div>
+          <div class="palco-moldura">
+            <canvas
+              id="palco"
+              width="192"
+              height="256"
+              role="img"
+              aria-label="Foguete com a galinha astronauta dentro da cabine, subindo pelas camadas da atmosfera"
+            ></canvas>
+            <div class="fala">
+              <canvas
+                id="retrato"
+                class="retrato"
+                width="20"
+                height="20"
+                aria-hidden="true"
+              ></canvas>
+              <p id="fala" class="balao"></p>
+            </div>
+          </div>
+          <div id="alertas" class="alertas" aria-live="polite"></div>
+        </section>
+
+        <!-- direita: camadas + controle -->
+        <section class="coluna col-dir">
+          <div class="placa-azul" aria-labelledby="tCam">
+            <h2 id="tCam">CAMADAS DA ATMOSFERA</h2>
+            <ol id="camadas" class="camadas"></ol>
+          </div>
+          <div class="placa" aria-labelledby="tCfg">
+            <h2 id="tCfg">PAINEL DE CONTROLE</h2>
+            <div
+              class="foguetes-prontos"
+              role="group"
+              aria-label="Foguetes prontos"
+            >
+              <button
+                type="button"
+                class="btn btn-creme btn-peq"
+                data-foguete="padrao"
+              >
+                Padrão
+              </button>
+              <button
+                type="button"
+                class="btn btn-creme btn-peq"
+                data-foguete="reforcado"
+              >
+                Reforçado
+              </button>
+              <button
+                type="button"
+                class="btn btn-creme btn-peq"
+                data-foguete="lunar"
+              >
+                Lunar
+              </button>
+            </div>
+            <form id="form" novalidate>
+              <div class="campos">
+                <label for="massaEstrutural"
+                  >Massa estrutural <small>kg</small
+                  ><input
+                    id="massaEstrutural"
+                    type="number"
+                    step="any"
+                    inputmode="decimal"
+                  /><span class="ajuda">Peso do foguete vazio.</span></label
+                >
+                <label for="massaCombustivel"
+                  >Combustível <small>kg</small
+                  ><input
+                    id="massaCombustivel"
+                    type="number"
+                    step="any"
+                    inputmode="decimal"
+                  /><span class="ajuda">Quanto há nos tanques.</span></label
+                >
+                <label for="empuxo"
+                  >Empuxo do motor <small>N</small
+                  ><input
+                    id="empuxo"
+                    type="number"
+                    step="any"
+                    inputmode="decimal"
+                  /><span class="ajuda">Força para cima (T).</span></label
+                >
+                <label for="consumo"
+                  >Consumo <small>kg/s</small
+                  ><input
+                    id="consumo"
+                    type="number"
+                    step="any"
+                    inputmode="decimal"
+                  /><span class="ajuda"
+                    >Combustível queimado por segundo.</span
+                  ></label
+                >
+                <label for="tempoMaximo"
+                  >Tempo máximo <small>s</small
+                  ><input
+                    id="tempoMaximo"
+                    type="number"
+                    step="any"
+                    inputmode="decimal"
+                  /><span class="ajuda">Duração máxima do voo.</span></label
+                >
+                <label for="velocidadeInicial"
+                  >Velocidade inicial <small>m/s</small
+                  ><input
+                    id="velocidadeInicial"
+                    type="number"
+                    step="any"
+                    inputmode="decimal"
+                  /><span class="ajuda">0 = parte do repouso.</span></label
+                >
+                <p class="ajuda modelo-fisico">Valores fixos em todas as missões: g₀ = 9,80665 m/s², ρ₀ = 1,225 kg/m³, área = 1,2 m² e Cd = 0,5.</p>
+              </div>
+              <label for="fator"
+                >Velocidade da animação
+                <select id="fator">
+                  <option value="1">1× (tempo real)</option>
+                  <option value="5">5×</option>
+                  <option value="10" selected>10×</option>
+                  <option value="25">25×</option>
+                  <option value="60">60×</option>
+                </select></label
+              >
+              <ul id="erros" class="erros" role="alert"></ul>
+              <div id="analise" class="analise" aria-live="polite"></div>
+              <div class="botoes">
+                <button type="button" id="btnAplicar" class="btn btn-azul">
+                  APLICAR CONFIGURAÇÕES
+                </button>
+                <button
+                  type="button"
+                  id="btnLancar"
+                  class="btn btn-verde btn-grande"
+                >
+                  LANÇAR FOGUETE 🚀
+                </button>
+                <button
+                  type="button"
+                  id="btnPausar"
+                  class="btn btn-laranja"
+                  disabled
+                >
+                  Pausar
+                </button>
+                <button
+                  type="button"
+                  id="btnContinuar"
+                  class="btn btn-laranja"
+                  disabled
+                >
+                  Continuar
+                </button>
+                <button
+                  type="button"
+                  id="btnAbortar"
+                  class="btn btn-vermelho"
+                  disabled
+                >
+                  Encerrar voo
+                </button>
+                <button type="button" id="btnReiniciar" class="btn btn-creme">
+                  Reiniciar
+                </button>
+                <button type="button" id="btnPadrao" class="btn btn-creme">
+                  Restaurar padrão
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+      </main>
+
+      <section class="graficos" aria-label="Gráficos">
+        <figure class="placa-azul">
+          <canvas
+            id="gAlt"
+            width="520"
+            height="250"
+            role="img"
+            aria-label="Gráfico da altitude em função do tempo"
+          ></canvas>
+          <figcaption>Altitude h(t)</figcaption>
+        </figure>
+        <figure class="placa-azul">
+          <canvas
+            id="gVel"
+            width="520"
+            height="250"
+            role="img"
+            aria-label="Gráfico da velocidade em função do tempo"
+          ></canvas>
+          <figcaption>Velocidade v(t) = h′(t)</figcaption>
+        </figure>
+        <figure class="placa-azul">
+          <canvas
+            id="gAce"
+            width="520"
+            height="250"
+            role="img"
+            aria-label="Gráfico da aceleração em função do tempo"
+          ></canvas>
+          <figcaption>Aceleração a(t) = v′(t) = h″(t)</figcaption>
+        </figure>
+      </section>
+
+      <section class="grade2">
+        <div class="placa-azul">
+          <h2>CONDIÇÕES DA MISSÃO</h2>
+          <ul id="condicoes" class="condicoes"></ul>
+        </div>
+        <div class="placa-azul">
+          <h2>DERIVADAS EM AÇÃO</h2>
+          <pre id="lab" class="lab">
+Lance um foguete para ver as derivadas calculadas com os dados do último passo.</pre
+          >
+        </div>
+        <div class="placa">
+          <h2>APRENDA COM A GALINHA</h2>
+          <div id="aprendaSim" class="aprenda-lista"></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ======================================================= VITÓRIA -->
+    <section
+      id="tela-vitoria"
+      class="tela tela-final"
+      hidden
+      aria-labelledby="tVit"
+    >
+      <canvas
+        id="cenaLua"
+        class="cena cena-final"
+        width="320"
+        height="180"
+        role="img"
+        aria-label="Superfície lunar com a Terra ao fundo e a galinha astronauta comemorando"
+      ></canvas>
+      <div class="final-conteudo">
+        <h2 id="tVit" class="titulo-final titulo-vitoria">
+          CONSEGUIMOS! CHEGAMOS À LUA!
+        </h2>
+        <div class="botoes-final">
+          <button
+            class="btn btn-verde btn-grande"
+            id="btnNovaVit"
+            type="button"
+          >
+            NOVA MISSÃO
+          </button>
+          <button class="btn btn-azul btn-grande" id="btnRelVit" type="button">
+            VER RELATÓRIO
+          </button>
+          <button
+            class="btn btn-creme btn-grande"
+            id="btnInicioVit"
+            type="button"
+          >
+            VOLTAR AO INÍCIO
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================= DERROTA -->
+    <section
+      id="tela-derrota"
+      class="tela tela-derrota"
+      hidden
+      aria-labelledby="tDer"
+    >
+      <div class="placa-derrota">
+        <div class="derrota-topo">
+          <canvas
+            id="retratoDerrota"
+            class="retrato retrato-grande"
+            width="30"
+            height="38"
+            aria-label="Galinha astronauta triste"
+          ></canvas>
+          <div>
+            <h2 id="tDer" class="titulo-final titulo-derrota">
+              LANÇAMENTO ABORTADO!
+            </h2>
+            <p id="resumoDer" class="sub-final"></p>
+          </div>
+        </div>
+        <div class="botoes-final">
+          <button
+            class="btn btn-verde btn-grande"
+            id="btnNovaDer"
+            type="button"
+          >
+            TENTAR NOVAMENTE
+          </button>
+          <button
+            class="btn btn-vermelho btn-grande"
+            id="btnRelDer"
+            type="button"
+          >
+            VER RELATÓRIO
+          </button>
+          <button
+            class="btn btn-creme btn-grande"
+            id="btnInicioDer"
+            type="button"
+          >
+            VOLTAR AO INÍCIO
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <dialog id="dlgRelatorio" aria-labelledby="tRel">
+      <h2 id="tRel">RELATÓRIO DA MISSÃO</h2>
+      <div id="corpoRelatorio"></div>
+      <p class="nota">
+        Modelo vertical (1D), único estágio, empuxo constante. A missão lunar é
+        um <b>modelo didático simplificado</b>: não calcula órbita nem a
+        gravidade da Lua.
+      </p>
+      <button class="btn btn-azul" type="button" id="fecharRelatorio">
+        Fechar
+      </button>
+    </dialog>
+
+    <script type="module" src="js/interface.js"></script>
+  </body>
+</html>
